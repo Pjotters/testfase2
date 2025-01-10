@@ -2,11 +2,11 @@
 const SUPABASE_URL = 'https://lmfvilfnwsylaxgdnolc.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtZnZpbGZud3N5bGF4Z2Rub2xjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1Mzc2OTMsImV4cCI6MjA1MjExMzY5M30.7to9Db88XzGtJLvjL07Th5ssCqL2e88niyISIBDB9qI'
 
-// Initialiseer Supabase client met de globale supabaseJs variabele
-const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+// Initialiseer Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // Maak globaal beschikbaar
-window.supabase = supabase;
+window.supabaseClient = supabase;
 
 // Cloudinary configuratie
 const cloudinaryConfig = {
