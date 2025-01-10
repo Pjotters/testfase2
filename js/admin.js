@@ -16,22 +16,16 @@ function showLoading(element) {
 }
 
 // Panel management
-async function showPanel(panelName) {
-    const panels = document.querySelectorAll('.panel');
-    panels.forEach(panel => panel.classList.remove('active'));
-    document.getElementById(`${panelName}-panel`).classList.add('active');
-
-    // Load panel content
-    switch(panelName) {
-        case 'dashboard':
-            await loadRecentPages();
-            break;
-        case 'pages':
-            await loadAllPages();
-            break;
-        case 'media':
-            await loadMediaLibrary();
-            break;
+function showPanel(panelName) {
+    // Verberg alle panels
+    document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    
+    // Toon het geselecteerde panel
+    const selectedPanel = document.getElementById(`${panelName}-panel`);
+    if (selectedPanel) {
+        selectedPanel.classList.add('active');
     }
 }
 
@@ -76,32 +70,33 @@ async function loadRecentPages() {
 
 // Nieuwe pagina maken
 async function createNewPage() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-        alert('Je moet ingelogd zijn om een pagina te maken');
-        return;
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            alert('Je moet ingelogd zijn om een pagina te maken');
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('websites')
+            .insert([
+                {
+                    user_id: user.id,
+                    title: 'Nieuwe Pagina',
+                    content: '',
+                    created_at: new Date(),
+                    updated_at: new Date()
+                }
+            ])
+            .select();
+
+        if (error) throw error;
+
+        window.location.href = `/editor.html?page=${data[0].id}`;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Er ging iets mis bij het maken van een nieuwe pagina');
     }
-
-    const { data, error } = await supabase
-        .from('websites')
-        .insert([
-            {
-                user_id: user.id,
-                title: 'Nieuwe Pagina',
-                content: '',
-                template: 'basic-template',
-                created_at: new Date(),
-                updated_at: new Date()
-            }
-        ])
-        .select();
-
-    if (error) {
-        console.error('Error creating page:', error);
-        return;
-    }
-
-    window.location.href = `/editor.html?page=${data[0].id}`;
 }
 
 // Media library
@@ -116,7 +111,6 @@ async function openMediaLibrary() {
         for (const file of files) {
             await uploadMedia(file);
         }
-        await loadMediaLibrary();
     };
 
     input.click();
@@ -212,5 +206,171 @@ async function testCloudinaryUpload() {
     } catch (error) {
         console.error('Upload mislukt:', error);
         alert('Upload mislukt: ' + error.message);
+    }
+} 
+
+async function loadDashboardStats() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    try {
+        // Laad statistieken
+        const { data: pages } = await supabase
+            .from('websites')
+            .select('*')
+            .eq('user_id', user.id);
+
+        const { data: media } = await supabase
+            .from('media')
+            .select('*')
+            .eq('user_id', user.id);
+
+        // Update UI
+        document.getElementById('totalPages').textContent = pages?.length || 0;
+        document.getElementById('totalMedia').textContent = media?.length || 0;
+        document.getElementById('lastUpdate').textContent = 
+            pages?.[0]?.updated_at ? new Date(pages[0].updated_at).toLocaleDateString() : '-';
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+} 
+
+async function openTemplates() {
+    const templatesPanel = document.getElementById('templates-panel');
+    showPanel('templates');
+    showLoading(templatesPanel);
+
+    try {
+        const { data: templates, error } = await supabase
+            .from('templates')
+            .select('*')
+            .order('name');
+
+        if (error) throw error;
+
+        templatesPanel.innerHTML = `
+            <h1>Templates</h1>
+            <div class="templates-grid">
+                ${templates.map(template => `
+                    <div class="template-card">
+                        <img src="${template.preview_url}" alt="${template.name}">
+                        <div class="template-info">
+                            <h3>${template.name}</h3>
+                            <p>${template.description}</p>
+                            <button onclick="useTemplate('${template.id}')" class="primary-button">
+                                Gebruik Template
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading templates:', error);
+        templatesPanel.innerHTML = '<div class="error">Er ging iets mis bij het laden van templates</div>';
+    }
+}
+
+async function useTemplate(templateId) {
+    try {
+        const { data: template, error: templateError } = await supabase
+            .from('templates')
+            .select('*')
+            .eq('id', templateId)
+            .single();
+
+        if (templateError) throw templateError;
+
+        const { data, error } = await supabase
+            .from('websites')
+            .insert([{
+                user_id: (await supabase.auth.getUser()).data.user.id,
+                title: 'Nieuwe Pagina',
+                content: template.content,
+                template_id: templateId,
+                created_at: new Date(),
+                updated_at: new Date()
+            }])
+            .select();
+
+        if (error) throw error;
+
+        window.location.href = `/editor.html?page=${data[0].id}`;
+    } catch (error) {
+        console.error('Error using template:', error);
+        alert('Er ging iets mis bij het gebruiken van de template');
+    }
+} 
+
+async function loadMediaLibrary() {
+    const mediaList = document.getElementById('mediaList');
+    showLoading(mediaList);
+
+    try {
+        const { data: media, error } = await supabase
+            .from('media')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        mediaList.innerHTML = `
+            <div class="media-header">
+                <h1>Media Bibliotheek</h1>
+                <button onclick="openMediaLibrary()" class="primary-button">
+                    Upload Media
+                </button>
+            </div>
+            <div class="media-grid">
+                ${media.map(item => `
+                    <div class="media-item" data-id="${item.id}">
+                        <div class="media-preview">
+                            ${item.type.startsWith('image/') 
+                                ? `<img src="${item.url}" alt="${item.filename}">`
+                                : `<div class="file-icon">${item.type}</div>`
+                            }
+                        </div>
+                        <div class="media-info">
+                            <p>${item.filename}</p>
+                            <div class="media-actions">
+                                <button onclick="copyMediaUrl('${item.url}')" class="icon-button">
+                                    <svg><!-- Copy icon --></svg>
+                                </button>
+                                <button onclick="deleteMedia('${item.id}')" class="icon-button delete">
+                                    <svg><!-- Delete icon --></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading media:', error);
+        mediaList.innerHTML = '<div class="error">Er ging iets mis bij het laden van media</div>';
+    }
+}
+
+function copyMediaUrl(url) {
+    navigator.clipboard.writeText(url);
+    showNotification('URL gekopieerd naar klembord');
+}
+
+async function deleteMedia(id) {
+    if (!confirm('Weet je zeker dat je dit media item wilt verwijderen?')) return;
+
+    try {
+        const { error } = await supabase
+            .from('media')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await loadMediaLibrary();
+        showNotification('Media item verwijderd');
+    } catch (error) {
+        console.error('Error deleting media:', error);
+        showError('Verwijderen mislukt');
     }
 } 
