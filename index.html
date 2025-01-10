@@ -3,61 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Builder Dashboard</title>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <link rel="stylesheet" href="../css/admin.css">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/marked@4.0.0/marked.min.js"></script>
+    <title>Website Builder - Maak je eigen website</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="admin-wrapper">
-        <nav class="admin-sidebar">
-            <div class="sidebar-header">
-                <h2>Website Builder</h2>
+    <header class="main-header">
+        <nav>
+            <div class="logo">Website Builder</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Prijzen</a>
+                <a href="/login.html" class="login-btn">Inloggen</a>
+                <a href="/login.html" class="cta-button">Aan de slag</a>
             </div>
-            <ul class="admin-menu">
-                <li>
-                    <a href="#" onclick="showPanel('dashboard')">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onclick="showPanel('pages')">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-                        </svg>
-                        Pagina's
-                    </a>
-                </li>
-                <!-- Andere menu items hier -->
-            </ul>
         </nav>
-        
-        <main class="admin-content">
-            <div id="dashboard-panel" class="panel active">
-                <h1>Dashboard</h1>
-                <div class="quick-actions">
-                    <button onclick="createNewPage()">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Nieuwe Pagina
-                    </button>
-                    <button onclick="openMediaLibrary()">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        Media Uploaden
-                    </button>
-                </div>
-                <!-- Rest van de content -->
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>WordPress zonder grenzen</h1>
+                <p>Alles wat je nodig hebt om een website te bouwen en te laten groeien, en dat allemaal op één plek.</p>
+                <a href="/login.html" class="cta-button">Aan de slag</a>
             </div>
-        </main>
-    </div>
-    <script type="module" src="../js/config.js"></script>
-    <script type="module" src="../js/admin.js"></script>
+            <div class="hero-image">
+                <img src="images/dashboard-preview.png" alt="Dashboard preview">
+            </div>
+        </section>
+
+        <section class="trusted-by">
+            <h2>WERELDWIJD VERTROUWEN 180 MILJOEN MENSEN OP ONS</h2>
+            <div class="logos">
+                <!-- Voeg hier logo's toe -->
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <h2>Host bij de beste</h2>
+            <p>Wanneer je een site maakt met Website Builder, krijg je alle kracht van razendsnel, veilige managed hosting.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <svg><!-- Ruimte icon --></svg>
+                    <h3>Ruimte om te groeien</h3>
+                </div>
+                <div class="feature-card">
+                    <svg><!-- Veilig icon --></svg>
+                    <h3>Echt veilig</h3>
+                </div>
+                <div class="feature-card">
+                    <svg><!-- Meenemen icon --></svg>
+                    <h3>Breng het met je mee</h3>
+                </div>
+                <div class="feature-card">
+                    <svg><!-- Opslag icon --></svg>
+                    <h3>Flexibele opslag</h3>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Over ons</h4>
+                <!-- Footer links -->
+            </div>
+        </div>
+    </footer>
 </body>
 </html> 
