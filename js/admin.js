@@ -374,3 +374,76 @@ async function deleteMedia(id) {
         showError('Verwijderen mislukt');
     }
 } 
+
+window.addEventListener('load', async () => {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        // Update UI met gebruikersgegevens
+        document.getElementById('userName').textContent = user.email.split('@')[0];
+        document.getElementById('userEmail').textContent = user.email;
+        
+        // Laad dashboard statistieken
+        loadDashboardStats();
+    } catch (error) {
+        console.error('Error:', error);
+        window.location.href = 'login.html';
+    }
+}); 
+
+async function loadAnalytics() {
+    const timeRange = document.getElementById('timeRange').value;
+    // Implementeer analytics data ophalen
+    // Voor nu gebruiken we dummy data
+    const analyticsData = {
+        visitors: 1234,
+        pageViews: 5678,
+        avgTime: '2:45'
+    };
+
+    document.getElementById('visitorCount').textContent = analyticsData.visitors;
+    document.getElementById('pageViews').textContent = analyticsData.pageViews;
+    document.getElementById('avgTime').textContent = analyticsData.avgTime;
+}
+
+async function runHealthCheck() {
+    const healthCheckBtn = document.querySelector('.health-check button');
+    healthCheckBtn.disabled = true;
+    healthCheckBtn.innerHTML = 'Bezig met controleren...';
+
+    try {
+        // Implementeer health check logica
+        // Voor nu simuleren we een check
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const results = [
+            { name: 'SSL Certificaat', status: 'good', message: 'Geldig' },
+            { name: 'Laadtijd', status: 'warning', message: '2.3s' },
+            { name: 'Mobile Friendly', status: 'good', message: 'Ja' }
+        ];
+
+        const resultsHTML = results.map(result => `
+            <div class="health-item">
+                <span>${result.name}</span>
+                <div class="health-status">
+                    <span class="status-indicator status-${result.status}"></span>
+                    ${result.message}
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('healthCheckResults').innerHTML = resultsHTML;
+    } catch (error) {
+        console.error('Health check failed:', error);
+    } finally {
+        healthCheckBtn.disabled = false;
+        healthCheckBtn.innerHTML = 'Check Uitvoeren';
+    }
+}
+
+// Event listeners
+document.getElementById('timeRange')?.addEventListener('change', loadAnalytics); 
