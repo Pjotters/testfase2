@@ -1,3 +1,8 @@
+const cloudinaryConfig = {
+    cloudName: 'qcrulxlgz',
+    uploadPreset: 'website_builder'
+};
+
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -176,4 +181,36 @@ async function deletePage(id) {
 
 function editPage(id) {
     window.location.href = `/editor.html?page=${id}`;
+} 
+
+async function testCloudinaryUpload() {
+    try {
+        const testContent = 'Test content';
+        const blob = new Blob([testContent], { type: 'text/plain' });
+        const file = new File([blob], 'test.txt', { type: 'text/plain' });
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'website_builder');
+        
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/qcrulxlgz/auto/upload`,
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error.message);
+        }
+        
+        console.log('Upload succesvol:', data);
+        alert('Test upload succesvol! URL: ' + data.secure_url);
+    } catch (error) {
+        console.error('Upload mislukt:', error);
+        alert('Upload mislukt: ' + error.message);
+    }
 } 
