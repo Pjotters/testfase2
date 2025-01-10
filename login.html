@@ -8,8 +8,15 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
-    <script src="js/config.js" defer></script>
-    <script src="js/auth.js" defer></script>
+    <script>
+        window.addEventListener('load', () => {
+            if (typeof supabase === 'undefined') {
+                console.error('Supabase is not initialized');
+            }
+        });
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
 </head>
 <body>
     <header class="main-header">
