@@ -197,6 +197,48 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="dashboard-section backup">
+                        <div class="section-header">
+                            <h2>Website Backups</h2>
+                            <button onclick="createBackup()" class="secondary-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
+                                Backup Maken
+                            </button>
+                        </div>
+                        <div class="backup-list" id="backupList">
+                            <!-- Wordt gevuld door JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section domain">
+                        <div class="section-header">
+                            <h2>Domein Instellingen</h2>
+                        </div>
+                        <div class="domain-settings">
+                            <div class="domain-input">
+                                <input type="text" id="customDomain" placeholder="jouwdomein.nl">
+                                <button onclick="updateDomain()" class="primary-btn">Koppelen</button>
+                            </div>
+                            <div class="dns-records">
+                                <h3>DNS Instellingen</h3>
+                                <table class="dns-table">
+                                    <tr>
+                                        <td>Type</td>
+                                        <td>Naam</td>
+                                        <td>Waarde</td>
+                                    </tr>
+                                    <tr>
+                                        <td>CNAME</td>
+                                        <td>www</td>
+                                        <td>pjotters-sites.nl</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
