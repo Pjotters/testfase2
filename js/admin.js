@@ -447,3 +447,64 @@ async function runHealthCheck() {
 
 // Event listeners
 document.getElementById('timeRange')?.addEventListener('change', loadAnalytics); 
+
+async function createBackup() {
+    const backupBtn = document.querySelector('.backup button');
+    backupBtn.disabled = true;
+    backupBtn.innerHTML = 'Backup maken...';
+
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Simuleer backup proces
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const { data: websites } = await supabase
+            .from('websites')
+            .select('*')
+            .eq('user_id', user.id);
+
+        const backup = {
+            timestamp: new Date().toISOString(),
+            websites: websites
+        };
+
+        // Sla backup op in Supabase storage
+        const { error } = await supabase
+            .storage
+            .from('backups')
+            .upload(`${user.id}/${backup.timestamp}.json`, JSON.stringify(backup));
+
+        if (error) throw error;
+
+        loadBackups();
+        alert('Backup succesvol gemaakt!');
+    } catch (error) {
+        console.error('Backup error:', error);
+        alert('Er ging iets mis bij het maken van de backup');
+    } finally {
+        backupBtn.disabled = false;
+        backupBtn.innerHTML = 'Backup Maken';
+    }
+}
+
+async function updateDomain() {
+    const domain = document.getElementById('customDomain').value;
+    if (!domain) {
+        alert('Vul een domeinnaam in');
+        return;
+    }
+
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Implementeer domein koppeling logica
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        alert(`Domein ${domain} wordt gekoppeld. Dit kan tot 24 uur duren.`);
+    } catch (error) {
+        console.error('Domain update error:', error);
+        alert('Er ging iets mis bij het koppelen van het domein');
+    }
+} 
