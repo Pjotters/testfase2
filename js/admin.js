@@ -22,10 +22,26 @@ function showPanel(panelName) {
         panel.classList.remove('active');
     });
     
-    // Toon het geselecteerde panel
-    const selectedPanel = document.getElementById(`${panelName}-panel`);
-    if (selectedPanel) {
-        selectedPanel.classList.add('active');
+    // Verwijder active class van alle menu items
+    document.querySelectorAll('.admin-menu a').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Activeer het juiste panel
+    document.getElementById(`${panelName}-panel`).classList.add('active');
+    document.querySelector(`[onclick="showPanel('${panelName}')"]`).classList.add('active');
+    
+    // Laad de juiste content
+    switch(panelName) {
+        case 'websites':
+            loadWebsites();
+            break;
+        case 'templates':
+            loadTemplates();
+            break;
+        case 'profile':
+            loadProfile();
+            break;
     }
 }
 
@@ -507,4 +523,78 @@ async function updateDomain() {
         console.error('Domain update error:', error);
         alert('Er ging iets mis bij het koppelen van het domein');
     }
+} 
+
+async function loadWebsites() {
+    const websitesPanel = document.getElementById('websites-panel');
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) return;
+
+    try {
+        const { data: websites, error } = await supabase
+            .from('websites')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('updated_at', { ascending: false });
+
+        if (error) throw error;
+
+        const websitesHTML = websites.map(website => `
+            <div class="website-card">
+                <h3>${website.title || 'Naamloze Website'}</h3>
+                <p>Laatst bewerkt: ${new Date(website.updated_at).toLocaleDateString()}</p>
+                <div class="website-actions">
+                    <button onclick="editPage('${website.id}')" class="primary-btn">Bewerken</button>
+                    <button onclick="deletePage('${website.id}')" class="secondary-btn">Verwijderen</button>
+                </div>
+            </div>
+        `).join('');
+
+        websitesPanel.querySelector('.panel-content').innerHTML = websitesHTML;
+    } catch (error) {
+        console.error('Error loading websites:', error);
+    }
+}
+
+async function loadTemplates() {
+    const templatesPanel = document.getElementById('templates-panel');
+    const templates = [
+        { id: 'business', name: 'Business Website', description: 'Perfect voor bedrijven' },
+        { id: 'portfolio', name: 'Portfolio', description: 'Showcase je werk' },
+        { id: 'blog', name: 'Blog', description: 'Start je eigen blog' }
+    ];
+
+    const templatesHTML = templates.map(template => `
+        <div class="template-card" onclick="useTemplate('${template.id}')">
+            <img src="images/templates/${template.id}.jpg" alt="${template.name}">
+            <div class="template-info">
+                <h3>${template.name}</h3>
+                <p>${template.description}</p>
+            </div>
+        </div>
+    `).join('');
+
+    templatesPanel.querySelector('.panel-content').innerHTML = templatesHTML;
+}
+
+async function loadProfile() {
+    const profilePanel = document.getElementById('profile-panel');
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) return;
+
+    profilePanel.querySelector('.panel-content').innerHTML = `
+        <div class="profile-form">
+            <div class="form-group">
+                <label>Naam</label>
+                <input type="text" id="profileName" value="${user.user_metadata?.name || ''}">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" value="${user.email}" disabled>
+            </div>
+            <button onclick="updateProfile()" class="primary-btn">Profiel Opslaan</button>
+        </div>
+    `;
 } 
