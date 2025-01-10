@@ -1,10 +1,15 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user && window.location.pathname !== '/testfase2/' && window.location.pathname !== '/testfase2/index.html') {
-        window.location.href = 'login.html';
-        return;
+// Wacht tot het document en alle scripts geladen zijn
+window.addEventListener('load', async () => {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user && window.location.pathname !== '/testfase2/' && window.location.pathname !== '/testfase2/index.html') {
+            window.location.href = 'login.html';
+            return;
+        }
+    } catch (error) {
+        console.error('Auth check error:', error);
     }
-}); 
+});
 
 async function handleLogin(event) {
     event.preventDefault();
@@ -38,9 +43,15 @@ async function handleRegister(event) {
     }
 
     try {
+        console.log('Registratie start...'); // Debug log
+        console.log('Supabase object:', supabase); // Debug log
+        
         const { data, error } = await supabase.auth.signUp({
             email,
-            password
+            password,
+            options: {
+                emailRedirectTo: `${window.location.origin}/testfase2/dashboard.html`
+            }
         });
 
         if (error) throw error;
@@ -49,7 +60,7 @@ async function handleRegister(event) {
         showTab('login');
     } catch (error) {
         console.error('Registration error:', error);
-        alert('Registratie mislukt: ' + error.message);
+        alert('Registratie mislukt: ' + (error.message || 'Onbekende fout'));
     }
 }
 
