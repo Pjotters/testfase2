@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Builder Dashboard</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Website Builder</h2>
+            </div>
+            <ul class="admin-menu">
+                <li>
+                    <a href="#" onclick="showPanel('dashboard')" class="active">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPanel('pages')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                        </svg>
+                        Pagina's
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPanel('media')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Media
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Uitloggen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <main class="admin-content">
+            <div class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Zoeken..." id="searchInput">
+                </div>
+                <div class="user-menu">
+                    <span id="userName"></span>
+                    <button onclick="logout()" class="logout-btn">Uitloggen</button>
+                </div>
+            </div>
+
+            <div id="dashboard-panel" class="panel active">
+                <div class="dashboard-header">
+                    <h1>Dashboard</h1>
+                    <p class="welcome-message">Welkom terug! Hier is een overzicht van je website.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Totaal Pagina's</h3>
+                        <p id="totalPages">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Media Items</h3>
+                        <p id="totalMedia">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Laatste Update</h3>
+                        <p id="lastUpdate">-</p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button onclick="createNewPage()" class="primary-button">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Nieuwe Pagina
+                    </button>
+                    <button onclick="openMediaLibrary()" class="secondary-button">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Media Uploaden
+                    </button>
+                    <button onclick="openTemplates()" class="secondary-button">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                        </svg>
+                        Templates
+                    </button>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-section">
+                        <h2>Recente Pagina's</h2>
+                        <div id="recentPagesList" class="list-container"></div>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h2>Recent Geüploade Media</h2>
+                        <div id="recentMediaList" class="media-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pages-panel" class="panel">
+                <h1>Pagina's</h1>
+                <div id="pagesList"></div>
+            </div>
+
+            <div id="media-panel" class="panel">
+                <h1>Media Bibliotheek</h1>
+                <div id="mediaList"></div>
+            </div>
+        </main>
+    </div>
+
+    <template id="pageItemTemplate">
+        <div class="page-item">
+            <div class="page-info">
+                <h3 class="page-title"></h3>
+                <span class="page-date"></span>
+            </div>
+            <div class="page-actions">
+                <button class="edit-btn">Bewerken</button>
+                <button class="delete-btn">Verwijderen</button>
+            </div>
+        </div>
+    </template>
+</body>
+</html> 
