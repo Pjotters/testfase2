@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Builder Dashboard</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/marked@4.0.0/marked.min.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Website Builder</h2>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="#" onclick="showPanel('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showPanel('pages')">Pagina's</a></li>
+                <li><a href="#" onclick="showPanel('templates')">Templates</a></li>
+                <li><a href="#" onclick="showPanel('media')">Media</a></li>
+                <li><a href="#" onclick="showPanel('settings')">Instellingen</a></li>
+            </ul>
+        </nav>
+        
+        <main class="admin-content">
+            <div id="dashboard-panel" class="panel active">
+                <h1>Dashboard</h1>
+                <div class="quick-actions">
+                    <button onclick="createNewPage()">Nieuwe Pagina</button>
+                    <button onclick="openMediaLibrary()">Upload Media</button>
+                    <button onclick="testCloudinaryUpload()">Test Cloudinary Upload</button>
+                </div>
+                <div class="recent-pages">
+                    <h2>Recente Pagina's</h2>
+                    <div id="recentPagesList"></div>
+                </div>
+                <div class="tool-group">
+                    <h3>Opslaan</h3>
+                    <button onclick="savePage()">Pagina Opslaan</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/admin.js"></script>
+</body>
+</html> 
