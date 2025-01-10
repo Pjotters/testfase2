@@ -1,28 +1,39 @@
 :root {
-    --primary-color: #3361CC;
-    --secondary-color: #6B7280;
-    --border-color: #E5E7EB;
-    --bg-color: #F9FAFB;
-    --component-hover: #EEF2FF;
+    --primary: #3361CC;
+    --secondary: #6B7280;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --background: #F9FAFB;
+    --border: #E5E7EB;
+    --grid-color: rgba(51, 97, 204, 0.1);
 }
 
 .editor-wrapper {
     display: grid;
-    grid-template-columns: 280px 1fr 300px;
+    grid-template-columns: 300px 1fr 300px;
     height: 100vh;
-    background: var(--bg-color);
+    background: var(--background);
 }
 
+/* Modern Sidebar Styling */
 .components-sidebar {
     background: white;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--border);
     padding: 1.5rem;
+    overflow-y: auto;
 }
 
-.components-sidebar h2 {
-    font-size: 1.25rem;
+.components-group {
     margin-bottom: 1.5rem;
-    color: #111827;
+}
+
+.components-group h3 {
+    font-size: 0.875rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .component-item {
@@ -31,7 +42,7 @@
     gap: 0.75rem;
     padding: 0.875rem;
     background: white;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     margin-bottom: 0.75rem;
     cursor: move;
@@ -40,12 +51,15 @@
 }
 
 .component-item:hover {
-    background: var(--component-hover);
+    border-color: var(--primary);
     transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(51, 97, 204, 0.1);
 }
 
+/* Editor Area */
 .editor-area {
     padding: 2rem;
+    position: relative;
 }
 
 .editor-toolbar {
@@ -64,14 +78,16 @@
     border-radius: 0.5rem;
     padding: 2rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: relative;
 }
 
-.settings-sidebar {
-    background: white;
-    border-left: 1px solid var(--border-color);
-    padding: 1.5rem;
+.website-content.show-grid {
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
 }
 
+/* Component Styling */
 .component {
     position: relative;
     padding: 1rem;
@@ -82,18 +98,19 @@
 }
 
 .component:hover {
-    border-color: var(--primary-color);
-    background: var(--component-hover);
+    border-color: var(--primary);
 }
 
-.component.dragging {
-    opacity: 0.5;
+.component-controls {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
-.component-placeholder {
-    border: 2px dashed var(--border-color);
-    border-radius: 0.375rem;
-    padding: 1rem;
-    margin: 0.75rem 0;
-    background: var(--bg-color);
+.component:hover .component-controls {
+    opacity: 1;
 } 
