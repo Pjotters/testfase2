@@ -549,12 +549,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeComponentsList() {
-    const componentsList = document.querySelector('.components-list');
-    const components = componentsList.querySelectorAll('.component-item');
-
+    const components = document.querySelectorAll('.component-item');
+    
     components.forEach(component => {
         component.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', component.dataset.type);
+            component.classList.add('dragging');
+        });
+
+        component.addEventListener('dragend', (e) => {
+            component.classList.remove('dragging');
         });
     });
 }
@@ -562,75 +566,62 @@ function initializeComponentsList() {
 function initializeDragAndDrop() {
     const websiteContent = document.getElementById('websiteContent');
     
-    // Maak de website content sorteerbaar
-    new Sortable(websiteContent, {
-        animation: 150,
-        ghostClass: 'sortable-ghost'
-    });
-
     websiteContent.addEventListener('dragover', (e) => {
         e.preventDefault();
+        const afterElement = getDragAfterElement(websiteContent, e.clientY);
+        const placeholder = document.querySelector('.component-placeholder');
+        
+        if (placeholder) {
+            if (afterElement) {
+                websiteContent.insertBefore(placeholder, afterElement);
+            } else {
+                websiteContent.appendChild(placeholder);
+            }
+        }
+    });
+
+    websiteContent.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        if (!document.querySelector('.component-placeholder')) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'component-placeholder';
+            placeholder.textContent = 'Sleep component hier';
+            websiteContent.appendChild(placeholder);
+        }
+    });
+
+    websiteContent.addEventListener('dragleave', (e) => {
+        if (e.target === websiteContent) {
+            const placeholder = document.querySelector('.component-placeholder');
+            if (placeholder) placeholder.remove();
+        }
     });
 
     websiteContent.addEventListener('drop', (e) => {
         e.preventDefault();
         const componentType = e.dataTransfer.getData('text/plain');
-        addComponent(componentType, e.clientY);
+        const placeholder = document.querySelector('.component-placeholder');
+        
+        if (placeholder) {
+            const component = createComponent(componentType);
+            websiteContent.replaceChild(component, placeholder);
+        }
     });
 }
 
-function addComponent(type, yPosition) {
-    const component = createComponent(type);
-    const websiteContent = document.getElementById('websiteContent');
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.component:not(.dragging)')];
     
-    // Bepaal de invoegpositie op basis van Y-coördinaat
-    const components = websiteContent.children;
-    let insertPosition = components.length;
-
-    for (let i = 0; i < components.length; i++) {
-        const rect = components[i].getBoundingClientRect();
-        if (yPosition < rect.top + rect.height / 2) {
-            insertPosition = i;
-            break;
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
         }
-    }
-
-    websiteContent.insertBefore(component, websiteContent.children[insertPosition]);
-}
-
-function createComponent(type) {
-    const component = document.createElement('div');
-    component.className = 'component';
-    component.dataset.type = type;
-
-    const controls = document.createElement('div');
-    controls.className = 'component-controls';
-    controls.innerHTML = `
-        <button onclick="moveComponent(this, 'up')">↑</button>
-        <button onclick="moveComponent(this, 'down')">↓</button>
-        <button onclick="removeComponent(this)">×</button>
-    `;
-
-    let content;
-    switch (type) {
-        case 'header':
-            content = '<h2 contenteditable="true">Nieuwe Header</h2>';
-            break;
-        case 'paragraph':
-            content = '<p contenteditable="true">Nieuwe paragraaf tekst...</p>';
-            break;
-        case 'image':
-            content = `
-                <div class="image-placeholder">
-                    <button onclick="uploadImage(this)">Upload Afbeelding</button>
-                </div>
-            `;
-            break;
-    }
-
-    component.innerHTML = content;
-    component.appendChild(controls);
-    return component;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 async function downloadWebsite() {
