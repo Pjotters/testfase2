@@ -598,3 +598,8 @@ async function loadProfile() {
         </div>
     `;
 } 
+
+// Voeg deze event listener toe om de stats te laden bij het opstarten
+document.addEventListener('DOMContentLoaded', () => {
+    loadDashboardStats();
+}); 
