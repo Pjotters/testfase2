@@ -38,4 +38,13 @@ export async function uploadToCloudinary(file, folder = 'websites') {
     }
 
     return await response.json()
-} 
+}
+
+// Maak de configuratie globaal beschikbaar
+window.cloudinaryConfig = {
+    cloudName: 'qcrulxlgz',
+    uploadPreset: 'website_builder'
+};
+
+window.supabase = supabase;
+window.uploadToCloudinary = uploadToCloudinary; 
