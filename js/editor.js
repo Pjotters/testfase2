@@ -566,47 +566,57 @@ function initializeComponentsList() {
 function initializeDragAndDrop() {
     const websiteContent = document.getElementById('websiteContent');
     
-    websiteContent.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(websiteContent, e.clientY);
-        const placeholder = document.querySelector('.component-placeholder');
+    // Maak alle componenten sorteerbaar
+    new Sortable(websiteContent, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        handle: '.component-handle',
+        onStart: function(evt) {
+            evt.item.classList.add('dragging');
+        },
+        onEnd: function(evt) {
+            evt.item.classList.remove('dragging');
+        }
+    });
+
+    // Grid toggle functie
+    const gridToggle = document.createElement('button');
+    gridToggle.className = 'grid-toggle';
+    gridToggle.innerHTML = 'Grid Weergeven';
+    gridToggle.onclick = function() {
+        websiteContent.classList.toggle('show-grid');
+        this.innerHTML = websiteContent.classList.contains('show-grid') ? 
+            'Grid Verbergen' : 'Grid Weergeven';
+    };
+    document.querySelector('.editor-toolbar').appendChild(gridToggle);
+
+    // Component creation
+    function createComponent(type) {
+        const component = document.createElement('div');
+        component.className = 'component';
+        component.dataset.type = type;
+
+        const handle = document.createElement('div');
+        handle.className = 'component-handle';
         
-        if (placeholder) {
-            if (afterElement) {
-                websiteContent.insertBefore(placeholder, afterElement);
-            } else {
-                websiteContent.appendChild(placeholder);
-            }
-        }
-    });
-
-    websiteContent.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        if (!document.querySelector('.component-placeholder')) {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'component-placeholder';
-            placeholder.textContent = 'Sleep component hier';
-            websiteContent.appendChild(placeholder);
-        }
-    });
-
-    websiteContent.addEventListener('dragleave', (e) => {
-        if (e.target === websiteContent) {
-            const placeholder = document.querySelector('.component-placeholder');
-            if (placeholder) placeholder.remove();
-        }
-    });
-
-    websiteContent.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const componentType = e.dataTransfer.getData('text/plain');
-        const placeholder = document.querySelector('.component-placeholder');
+        const controls = createComponentControls();
         
-        if (placeholder) {
-            const component = createComponent(componentType);
-            websiteContent.replaceChild(component, placeholder);
+        let content;
+        switch(type) {
+            case 'grid-2':
+                content = `<div class="grid-2-cols">${'<div class="grid-col"></div>'.repeat(2)}</div>`;
+                break;
+            case 'grid-3':
+                content = `<div class="grid-3-cols">${'<div class="grid-col"></div>'.repeat(3)}</div>`;
+                break;
+            // Voeg hier meer componenten toe
         }
-    });
+
+        component.innerHTML = content;
+        component.prepend(handle);
+        component.appendChild(controls);
+        return component;
+    }
 }
 
 function getDragAfterElement(container, y) {
