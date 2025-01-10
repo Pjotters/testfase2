@@ -540,4 +540,117 @@ async function testCloudinaryUpload() {
         console.error('Upload mislukt:', error);
         alert('Upload mislukt: ' + error.message);
     }
+}
+
+// Initialiseer drag & drop functionaliteit
+document.addEventListener('DOMContentLoaded', () => {
+    initializeDragAndDrop();
+    initializeComponentsList();
+});
+
+function initializeComponentsList() {
+    const componentsList = document.querySelector('.components-list');
+    const components = componentsList.querySelectorAll('.component-item');
+
+    components.forEach(component => {
+        component.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', component.dataset.type);
+        });
+    });
+}
+
+function initializeDragAndDrop() {
+    const websiteContent = document.getElementById('websiteContent');
+    
+    // Maak de website content sorteerbaar
+    new Sortable(websiteContent, {
+        animation: 150,
+        ghostClass: 'sortable-ghost'
+    });
+
+    websiteContent.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    });
+
+    websiteContent.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const componentType = e.dataTransfer.getData('text/plain');
+        addComponent(componentType, e.clientY);
+    });
+}
+
+function addComponent(type, yPosition) {
+    const component = createComponent(type);
+    const websiteContent = document.getElementById('websiteContent');
+    
+    // Bepaal de invoegpositie op basis van Y-coördinaat
+    const components = websiteContent.children;
+    let insertPosition = components.length;
+
+    for (let i = 0; i < components.length; i++) {
+        const rect = components[i].getBoundingClientRect();
+        if (yPosition < rect.top + rect.height / 2) {
+            insertPosition = i;
+            break;
+        }
+    }
+
+    websiteContent.insertBefore(component, websiteContent.children[insertPosition]);
+}
+
+function createComponent(type) {
+    const component = document.createElement('div');
+    component.className = 'component';
+    component.dataset.type = type;
+
+    const controls = document.createElement('div');
+    controls.className = 'component-controls';
+    controls.innerHTML = `
+        <button onclick="moveComponent(this, 'up')">↑</button>
+        <button onclick="moveComponent(this, 'down')">↓</button>
+        <button onclick="removeComponent(this)">×</button>
+    `;
+
+    let content;
+    switch (type) {
+        case 'header':
+            content = '<h2 contenteditable="true">Nieuwe Header</h2>';
+            break;
+        case 'paragraph':
+            content = '<p contenteditable="true">Nieuwe paragraaf tekst...</p>';
+            break;
+        case 'image':
+            content = `
+                <div class="image-placeholder">
+                    <button onclick="uploadImage(this)">Upload Afbeelding</button>
+                </div>
+            `;
+            break;
+    }
+
+    component.innerHTML = content;
+    component.appendChild(controls);
+    return component;
+}
+
+async function downloadWebsite() {
+    const websiteContent = document.getElementById('websiteContent');
+    
+    // Genereer HTML
+    const html = generateHTML(websiteContent);
+    const css = generateCSS();
+    
+    // Maak ZIP bestand
+    const zip = new JSZip();
+    zip.file('index.html', html);
+    zip.file('styles.css', css);
+    
+    // Download ZIP
+    const content = await zip.generateAsync({type: 'blob'});
+    const url = window.URL.createObjectURL(content);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mijn-website.zip';
+    a.click();
 } 
