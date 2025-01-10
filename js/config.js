@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuratie
-const supabaseUrl = 'https://lmfvilfnwsylaxgdnolc.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtZnZpbGZud3N5bGF4Z2Rub2xjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1Mzc2OTMsImV4cCI6MjA1MjExMzY5M30.7to9Db88XzGtJLvjL07Th5ssCqL2e88niyISIBDB9qI'
+const SUPABASE_URL = 'https://lmfvilfnwsylaxgdnolc.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtZnZpbGZud3N5bGF4Z2Rub2xjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1Mzc2OTMsImV4cCI6MjA1MjExMzY5M30.7to9Db88XzGtJLvjL07Th5ssCqL2e88niyISIBDB9qI'
 
 // Cloudinary configuratie
 const cloudinaryConfig = {
@@ -13,7 +13,7 @@ const cloudinaryConfig = {
 }
 
 // Initialiseer Supabase client
-export const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // Exporteer Cloudinary config
 export const cloudinary = cloudinaryConfig
