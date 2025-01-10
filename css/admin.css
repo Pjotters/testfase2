@@ -2,8 +2,13 @@
     --primary-color: #2271b1;
     --secondary-color: #1d2327;
     --background-color: #f0f2f5;
-    --sidebar-width: 240px;
-    --header-height: 60px;
+    --card-background: #fff;
+    --text-primary: #1d2327;
+    --text-secondary: #50575e;
+    --border-color: #dcdcde;
+    --success-color: #00a32a;
+    --warning-color: #dba617;
+    --error-color: #d63638;
 }
 
 body {
@@ -112,4 +117,57 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.top-bar {
+    background: var(--card-background);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.stat-card {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.list-container {
+    background: var(--card-background);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.primary-button {
+    background: var(--primary-color);
+    color: white;
+}
+
+.secondary-button {
+    background: var(--card-background);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
